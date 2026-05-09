@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gym Progress – Seu diário de treino inteligente</title>
+  <meta name="description" content="Registre seus treinos, acompanhe sua evolução e alcance seus objetivos com o Gym Progress. Disponível no Android.">
+  <meta property="og:title" content="Gym Progress – Seu diário de treino inteligente">
+  <meta property="og:description" content="Registre treinos, acompanhe progresso e evolua mais rápido.">
+  <meta property="og:image" content="og-image.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --dark:    #0d0d1a;
+      --surface: #16213e;
+      --card:    #1a1f3a;
+      --accent:  #4f8ef7;
+      --accent2: #a78bfa;
+      --text:    #e8eaf6;
+      --muted:   #8892b0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(13,13,26,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(79,142,247,.15);
+      padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-size: 1.2rem; font-weight: 700; color: var(--accent); letter-spacing: .5px; }
+    .nav-cta {
+      background: var(--accent); color: #fff;
+      padding: 8px 20px; border-radius: 8px;
+      text-decoration: none; font-weight: 600; font-size: .9rem;
+      transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: .85; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; text-align: center;
+      padding: 120px 24px 80px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(79,142,247,.18) 0%, transparent 70%);
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(79,142,247,.15);
+      border: 1px solid rgba(79,142,247,.4);
+      color: var(--accent);
+      padding: 6px 16px; border-radius: 99px;
+      font-size: .8rem; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 800; line-height: 1.15;
+      max-width: 700px; margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 1.15rem; color: var(--muted);
+      max-width: 520px; margin-bottom: 40px;
+    }
+    .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--accent); color: #fff;
+      padding: 14px 28px; border-radius: 12px;
+      text-decoration: none; font-weight: 700; font-size: 1rem;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 24px rgba(79,142,247,.35);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(79,142,247,.45); }
+    .btn-secondary {
+      display: flex; align-items: center; gap: 10px;
+      background: transparent;
+      border: 1px solid rgba(79,142,247,.4);
+      color: var(--accent);
+      padding: 14px 28px; border-radius: 12px;
+      text-decoration: none; font-weight: 600; font-size: 1rem;
+      transition: background .2s;
+    }
+    .btn-secondary:hover { background: rgba(79,142,247,.08); }
+
+    .play-badge {
+      width: 180px; margin-top: 48px; opacity: .9;
+      transition: opacity .2s;
+    }
+    .play-badge:hover { opacity: 1; }
+
+    /* ── FEATURES ── */
+    .section { padding: 96px 24px; max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      text-align: center; color: var(--accent);
+      font-size: .8rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .section-title {
+      text-align: center; font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800; margin-bottom: 56px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 16px; padding: 28px;
+      transition: transform .2s, border-color .2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); border-color: rgba(79,142,247,.3); }
+    .feature-icon { font-size: 2rem; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p  { color: var(--muted); font-size: .95rem; }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      background: var(--surface);
+      padding: 96px 24px;
+    }
+    .how-inner { max-width: 900px; margin: 0 auto; }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 32px; margin-top: 56px;
+    }
+    .step { text-align: center; }
+    .step-num {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; font-weight: 800;
+      margin: 0 auto 16px;
+    }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .step p  { color: var(--muted); font-size: .9rem; }
+
+    /* ── PREMIUM ── */
+    .premium-section { padding: 96px 24px; }
+    .premium-inner { max-width: 860px; margin: 0 auto; }
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px; margin-top: 56px;
+    }
+    .plan-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 20px; padding: 32px;
+    }
+    .plan-card.featured {
+      border-color: var(--accent);
+      background: linear-gradient(145deg, rgba(79,142,247,.12), var(--card));
+      position: relative;
+    }
+    .plan-badge {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #fff;
+      padding: 4px 16px; border-radius: 99px;
+      font-size: .75rem; font-weight: 700; white-space: nowrap;
+    }
+    .plan-name { font-size: 1rem; color: var(--muted); font-weight: 600; }
+    .plan-price { font-size: 2.2rem; font-weight: 800; margin: 8px 0 4px; }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--muted); }
+    .plan-features { list-style: none; margin: 20px 0 0; }
+    .plan-features li {
+      padding: 8px 0;
+      border-top: 1px solid rgba(255,255,255,.06);
+      color: var(--muted); font-size: .9rem;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .plan-features li::before { content: "✓"; color: var(--accent); font-weight: 700; }
+    .plan-features li.no::before { content: "✕"; color: #ef5350; }
+    .plan-features li.no { opacity: .5; }
+
+    /* ── CTA FINAL ── */
+    .cta-section {
+      text-align: center;
+      padding: 96px 24px;
+      background: radial-gradient(ellipse at 50% 100%, rgba(79,142,247,.15) 0%, transparent 70%);
+    }
+    .cta-section h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 16px; }
+    .cta-section p  { color: var(--muted); margin-bottom: 40px; font-size: 1.05rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid rgba(255,255,255,.07);
+      text-align: center; padding: 32px 24px;
+      color: var(--muted); font-size: .85rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .hero-buttons { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">💪 Gym Progress</span>
+  <a href="#download" class="nav-cta">Baixar grátis</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-badge">🚀 Disponível no Android</div>
+  <h1>Seu diário de treino <span>inteligente</span></h1>
+  <p>Registre cada série, acompanhe sua evolução com gráficos e supere seus limites a cada treino.</p>
+  <div class="hero-buttons">
+    <a href="#download" class="btn-primary">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 0 2.07-.15l12.6-7.27-2.83-2.83-11.84 10.25zm-1.14-20.1A2 2 0 0 0 2 5v14a2 2 0 0 0 .04.34l11.5-9.34-11.5-6.34zM21.4 10.5l-2.72-1.57-3.18 2.57 3.18 3.18 2.73-1.58a2 2 0 0 0 0-2.6zM5.25.39A2 2 0 0 0 2 2.08v.05l11.84 6.84 2.83-2.83L5.25.39z"/></svg>
+      Baixar no Google Play
+    </a>
+    <a href="#features" class="btn-secondary">Ver funcionalidades →</a>
+  </div>
+  <!-- substitua o href pelo link real do Play Store quando publicar -->
+  <a href="#download" id="download">
+    <img
+      src="https://play.google.com/intl/pt-BR_br/badges/static/images/badges/pt-br_badge_web_generic.png"
+      alt="Disponível no Google Play"
+      class="play-badge"
+    >
+  </a>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section">
+    <p class="section-label">Funcionalidades</p>
+    <h2 class="section-title">Tudo que você precisa para evoluir</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Templates de treino</h3>
+        <p>Crie rotinas personalizadas ou use os templates prontos. Organize por grupos musculares com facilidade.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Registro em tempo real</h3>
+        <p>Registre séries, repetições e pesos durante o treino. Timer integrado para controle do descanso.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Gráficos de progresso</h3>
+        <p>Visualize sua evolução em gráficos detalhados. Veja volume total, recordes e tendências ao longo do tempo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏋️</div>
+        <h3>Calculadora de anilhas</h3>
+        <p>Monte a barra corretamente na hora. Calcula automaticamente quais anilhas usar para cada carga.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📸</div>
+        <h3>Fotos de progresso</h3>
+        <p>Documente sua transformação com fotos organizadas por data. Privadas, salvas apenas no seu dispositivo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <h3>Lembretes de treino</h3>
+        <p>Configure alarmes para não perder nenhum treino. Notificações inteligentes no horário certo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>100% offline e privado</h3>
+        <p>Seus dados ficam no seu celular. Sem conta, sem servidor, sem nuvem. Sua privacidade garantida.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Resumo do treino</h3>
+        <p>Ao finalizar, veja um resumo completo: volume, recordes batidos, tempo total e comparação com treino anterior.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<div class="how-section">
+  <div class="how-inner">
+    <p class="section-label" style="text-align:center">Como funciona</p>
+    <h2 class="section-title">Simples de usar, poderoso nos resultados</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Crie sua rotina</h3>
+        <p>Monte seus treinos com os exercícios que você já faz ou escolha entre os templates disponíveis.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Registre os treinos</h3>
+        <p>Durante o treino, marque cada série. O app lembra o que você fez da última vez.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Acompanhe a evolução</h3>
+        <p>Veja seus gráficos de progresso e saiba exatamente o quanto você evoluiu.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Supere seus limites</h3>
+        <p>Com dados na mão, fica fácil saber quando aumentar a carga e bater novos recordes.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PREMIUM -->
+<section class="premium-section" id="premium">
+  <div class="premium-inner">
+    <p class="section-label" style="text-align:center">Planos</p>
+    <h2 class="section-title">Comece grátis, evolua sem limites</h2>
+    <div class="plans">
+      <div class="plan-card">
+        <p class="plan-name">Gratuito</p>
+        <p class="plan-price">R$0 <span>/ sempre</span></p>
+        <ul class="plan-features">
+          <li>Treinos ilimitados</li>
+          <li>Histórico completo</li>
+          <li>Calculadora de anilhas</li>
+          <li>Gráficos básicos</li>
+          <li class="no">Sem anúncios</li>
+          <li class="no">Fotos de progresso ilimitadas</li>
+        </ul>
+      </div>
+      <div class="plan-card featured">
+        <span class="plan-badge">⭐ Mais popular</span>
+        <p class="plan-name">Premium</p>
+        <p class="plan-price">R$9,90 <span>/ mês</span></p>
+        <ul class="plan-features">
+          <li>Treinos ilimitados</li>
+          <li>Histórico completo</li>
+          <li>Calculadora de anilhas</li>
+          <li>Gráficos avançados</li>
+          <li>Sem anúncios</li>
+          <li>Fotos de progresso ilimitadas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section">
+  <h2>Pronto para evoluir?</h2>
+  <p>Baixe agora e comece a registrar seu primeiro treino em segundos.</p>
+  <a href="#download" class="btn-primary" style="display:inline-flex">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 0 2.07-.15l12.6-7.27-2.83-2.83-11.84 10.25zm-1.14-20.1A2 2 0 0 0 2 5v14a2 2 0 0 0 .04.34l11.5-9.34-11.5-6.34zM21.4 10.5l-2.72-1.57-3.18 2.57 3.18 3.18 2.73-1.58a2 2 0 0 0 0-2.6zM5.25.39A2 2 0 0 0 2 2.08v.05l11.84 6.84 2.83-2.83L5.25.39z"/></svg>
+    Baixar grátis no Google Play
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p style="margin-bottom:12px">
+    <a href="privacy_policy.html">Política de Privacidade</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:davidcardoso.job@gmail.com">Contato</a>
+    &nbsp;·&nbsp;
+    <a href="https://instagram.com/gymprogress.app" target="_blank">Instagram</a>
+  </p>
+  <p>© 2026 ZenFit Studio. Todos os direitos reservados.</p>
+</footer>
+
+</body>
+</html>
